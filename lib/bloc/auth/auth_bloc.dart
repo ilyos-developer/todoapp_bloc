@@ -19,6 +19,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Stream<AuthState> mapEventToState(
     AuthEvent event,
   ) async* {
+    if (event is AuthorizationCheckEvent) {
+      var token = await _storage.read(key: "userToken");
+      print("line 24 $token");
+      if (token != null) {
+        yield HomeScreenState();
+      } else {
+        yield LoginScreenState();
+      }
+    }
     if (event is CreateUserEvent) {
       yield AuthInitial();
       try {
@@ -27,7 +36,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await _storage.write(key: 'userToken', value: user.token);
         yield LoginedUserState();
       } catch (err) {
-        print("line 25: $err");
+        print("line 39: $err");
       }
     }
     if (event is LoginUserEvent) {
@@ -37,8 +46,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await _storage.write(key: 'userToken', value: user.token);
         yield LoginedUserState();
       } catch (err) {
-        print("line 37: $err");
+        print("line 49: $err");
       }
+    }
+    if (event is LogOutEvent) {
+      await _storage.delete(key: 'userToken');
+      yield LoginScreenState();
     }
   }
 }
