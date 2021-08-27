@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:todo_trello/model/cards.dart';
-import 'package:todo_trello/model/login_errors.dart';
 import 'package:todo_trello/model/user.dart';
 
 class DioClient {
@@ -52,10 +51,9 @@ class DioClient {
     } on DioError catch (e) {
       if (e.response!.statusCode == 400) {
         print(e.error);
-        final loginErr = LoginErrors.fromJson(e.response!.data);
-        print(loginErr.username);
-        print(loginErr.email);
+        final loginErr = User.fromJson(e.response!.data);
         print(loginErr.nonFieldErrors);
+        return loginErr;
       }
     }
   }

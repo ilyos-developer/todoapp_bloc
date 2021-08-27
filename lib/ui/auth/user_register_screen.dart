@@ -22,7 +22,7 @@ class UserRegister extends StatelessWidget {
           CircularProgressIndicator();
         }
         if (state is LoginedUserState) {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => HomeScreen(),
@@ -46,9 +46,14 @@ class UserRegister extends StatelessWidget {
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   autofocus: false,
-                  validator: (value) => value!.isEmpty ? 'Введите логин' : null,
-                  onChanged: (value) =>
-                      value.length < 4 ? 'minimum is 4 characters' : null,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Введите логин";
+                    }
+                    if (value.length < 4) {
+                      return "минимум 4 символа";
+                    }
+                  },
                   decoration: InputDecoration(
                     labelText: 'Логин',
                     filled: true,
@@ -71,7 +76,16 @@ class UserRegister extends StatelessWidget {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   autofocus: false,
-                  validator: (value) => value!.isEmpty ? 'Введите email' : null,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Введите email";
+                    }
+                    if (!RegExp(
+                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                        .hasMatch(value)) {
+                      return 'Адрес электронной почты неверный';
+                    }
+                  },
                   decoration: InputDecoration(
                     labelText: 'Email',
                     filled: true,
@@ -94,8 +108,14 @@ class UserRegister extends StatelessWidget {
                   controller: _passwordController,
                   keyboardType: TextInputType.text,
                   autofocus: false,
-                  validator: (value) =>
-                      value!.isEmpty ? 'Введите пароль' : null,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Введите пароль";
+                    }
+                    if (value.length < 8) {
+                      return "минимум 8 символа";
+                    }
+                  },
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Пароль',

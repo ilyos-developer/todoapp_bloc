@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meta/meta.dart';
 import 'package:todo_trello/model/user.dart';
@@ -44,9 +45,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         User user = await DioClient()
             .loginUser(userName: event.userName, pass: event.password);
         await _storage.write(key: 'userToken', value: user.token);
-        yield LoginedUserState();
-      } catch (err) {
-        print("line 49: $err");
+        if (user.token != null) {
+          yield LoginedUserState();
+        } else {
+          yield LogErrorState(user.nonFieldErrors!);
+        }
+        print("line 53: ${user.nonFieldErrors}");
+      } catch (e) {
+        print("line 55: $e");
       }
     }
     if (event is LogOutEvent) {

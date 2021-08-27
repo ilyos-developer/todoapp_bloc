@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo_trello/bloc/auth/auth_bloc.dart';
 import 'package:todo_trello/bloc/home/home_bloc.dart';
+import 'package:todo_trello/ui/auth/login_screen.dart';
 
 import 'components/task_card.dart';
 
@@ -36,17 +37,30 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text("Approved"),
               ],
             ),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Trello'),
-                IconButton(
-                  onPressed: () {
-                    BlocProvider.of<AuthBloc>(context).add(LogOutEvent(false));
-                  },
-                  icon: Icon(Icons.logout),
-                ),
-              ],
+            title: BlocListener<AuthBloc, AuthState>(
+              listener: (context, state) {
+                if (state is LoginScreenState) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LoginScreen(),
+                    ),
+                  );
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Trello'),
+                  IconButton(
+                    onPressed: () {
+                      BlocProvider.of<AuthBloc>(context)
+                          .add(LogOutEvent(false));
+                    },
+                    icon: Icon(Icons.logout),
+                  ),
+                ],
+              ),
             ),
           ),
           body: TabBarView(
